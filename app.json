@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "localo-mobile",
+    "slug": "localo-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Allow Thozhil to access the microphone for voice search and voice introductions?",
+        "NSLocationWhenInUseUsageDescription": "Allow Thozhil to access your location for city/area discovery?"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptiveIcon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.localo.mobile",
+      "requestLegacyExternalStorage": true,
+      "permissions": ["RECORD_AUDIO", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fontFamily": "CustomFont",
+          "fontWeight": "400 600 700"
+        }
+      ]
+    ],
+    "expo": {
+      "scheme": "localo"
+    }
+  }
+}
