@@ -1,0 +1,40 @@
+node_modules/
+.expo/
+dist/
+web-build/
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Environment / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Build output
+android/
+ios/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Editor / OS
+.DS_Store
+*.swp
+.*.swp
+*.swo
+
+# Local repair backups (generated during development)
+*.bak
+*.bak.*
+*.bak2
+*.current
+*.working
+*.fixed.*
+
+# Test output
+coverage/

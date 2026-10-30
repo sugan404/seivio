@@ -2,6 +2,7 @@
   "expo": {
     "name": "Seivio",
     "slug": "seivio",
+    "scheme": "seivio",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -9,37 +10,27 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2563EB"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.seivio.app",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Allow Seivio to access the microphone for voice search and voice introductions?",
-        "NSLocationWhenInUseUsageDescription": "Allow Seivio to access your location for city/area discovery?"
+        "NSMicrophoneUsageDescription": "Allow Seivio to access the microphone for voice search and voice introductions.",
+        "NSLocationWhenInUseUsageDescription": "Allow Seivio to access your location for city and area discovery.",
+        "NSPhotoLibraryUsageDescription": "Allow Seivio to access your photos to update your profile picture.",
+        "NSCameraUsageDescription": "Allow Seivio to access the camera to take a profile picture."
       }
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptiveIcon.png",
-        "backgroundColor": "#ffffff"
-      },
       "package": "com.seivio.app",
-      "requestLegacyExternalStorage": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2563EB"
+      },
       "permissions": ["RECORD_AUDIO", "ACCESS_FINE_LOCATION"]
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-font",
-        {
-          "fontFamily": "CustomFont",
-          "fontWeight": "400 600 700"
-        }
-      ]
-    ],
-    "expo": {
-      "scheme": "seivio"
-    }
+    "plugins": []
   }
 }

@@ -1,66 +1,107 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Icon } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { designTokens } from "@/constants/designTokens";
 
-const BottomNav = () => {
-  const navigate = useNavigation();
-  const [activeTab, setActiveTab] = useState("home");
+type IconName = keyof typeof Ionicons.glyphMap;
 
-  const tabRoutes = {
-    home: "home",
-    search: "search",
-    favorites: "favorites",
-    account: "account",
-  };
+const TAB_ICONS: Record<string, IconName> = {
+  Home: "home-outline",
+  Search: "search-outline",
+  Favorites: "heart-outline",
+  Account: "person-outline",
+};
 
-  const handleTabPress = (tab: string) => {
-    setActiveTab(tab);
-    navigate(tabRoutes[tab]);
-  };
+const TAB_ICONS_ACTIVE: Record<string, IconName> = {
+  Home: "home",
+  Search: "search",
+  Favorites: "heart",
+  Account: "person",
+};
+
+const TAB_LABELS: Record<string, string> = {
+  Home: "Home",
+  Search: "Search",
+  Favorites: "Saved",
+  Account: "Account",
+};
+
+const BottomNav = ({ state, navigation }: BottomTabBarProps) => {
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
-      {["home", "search", "favorites", "account"].map((tab) => (
-        <TouchableOpacity
-          key={tab}
-          style={[
-            styles.tab,
-            activeTab === tab && styles.tabActive,
-            {
-              flex: 1,
-            },
-          ]}
-          onPress={() => handleTabPress(tab)}
-        >
-          <Icon name={tab} size={24} color={activeTab === tab ? "#1a1a2e" : "#64748b"} />
-          <Text style={styles.tabLabel}>{tab}</Text>
-        </TouchableOpacity>
-      ))}
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      {state.routes.map((route, index) => {
+        const focused = state.index === index;
+        const label = TAB_LABELS[route.name] ?? route.name;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: "tabPress",
+            target: route.key,
+            canPreventDefault: true,
+          });
+
+          if (!focused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={focused ? { selected: true } : {}}
+            accessibilityLabel={label}
+            testID={`tab-${route.name.toLowerCase()}`}
+            activeOpacity={0.7}
+            style={styles.tab}
+            onPress={onPress}
+          >
+            <Ionicons
+              name={
+                focused
+                  ? TAB_ICONS_ACTIVE[route.name] ?? "ellipse"
+                  : TAB_ICONS[route.name] ?? "ellipse-outline"
+              }
+              size={24}
+              color={focused ? designTokens.primaryBlue : designTokens.secondaryText}
+            />
+            <Text style={[styles.label, focused && styles.labelActive]}>
+              {label}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#ffffff",
-    padding: 10,
+    flexDirection: "row",
+    backgroundColor: designTokens.whiteSurface,
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0",
-    justifyContent: "space-around",
+    borderTopColor: designTokens.border,
+    paddingTop: 8,
   },
   tab: {
+    flex: 1,
     alignItems: "center",
-    paddingVertical: 8,
+    justifyContent: "center",
+    paddingVertical: 4,
   },
-  tabActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#1a1a2e",
+  label: {
+    fontSize: 11,
+    marginTop: 2,
+    color: designTokens.secondaryText,
   },
-  tabLabel: { fontSize: 12, marginTop: 2 },
+  labelActive: {
+    color: designTokens.primaryBlue,
+    fontWeight: "600",
+  },
 });
 
 export default BottomNav;
