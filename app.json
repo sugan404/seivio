@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "localo-mobile",
-    "slug": "localo-mobile",
+    "name": "Seivio",
+    "slug": "seivio",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,8 +15,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Allow Thozhil to access the microphone for voice search and voice introductions?",
-        "NSLocationWhenInUseUsageDescription": "Allow Thozhil to access your location for city/area discovery?"
+        "NSMicrophoneUsageDescription": "Allow Seivio to access the microphone for voice search and voice introductions?",
+        "NSLocationWhenInUseUsageDescription": "Allow Seivio to access your location for city/area discovery?"
       }
     },
     "android": {
@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/adaptiveIcon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.localo.mobile",
+      "package": "com.seivio.app",
       "requestLegacyExternalStorage": true,
       "permissions": ["RECORD_AUDIO", "ACCESS_FINE_LOCATION"]
     },
@@ -39,7 +39,7 @@
       ]
     ],
     "expo": {
-      "scheme": "localo"
+      "scheme": "seivio"
     }
   }
 }
