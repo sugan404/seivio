@@ -111,7 +111,7 @@ if (loading) {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerLeft}><Text style={styles.headerTitle}>Thozhil</Text></View>
+        <View style={styles.headerLeft}><Text style={styles.headerTitle}>Seivio</Text></View>
         <View style={styles.headerRight}>
           {user ? (
             <TouchableOpacity onPress={handleLogout} style={styles.profileBtn}>
@@ -309,5 +309,4 @@ const styles = StyleSheet.create({
   emptyState: { flex: 1, justifyContent: "center", alignItems: "center", padding: 40 },
   emptyText: { color: "#64748b", fontSize: 16, textAlign: "center" },
 });
-  );
 }
