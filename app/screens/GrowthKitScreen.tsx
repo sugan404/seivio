@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Switch,
-  Share,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -30,6 +29,7 @@ import {
   STICKER_TEMPLATES,
   StickerTemplateId,
 } from "@/lib/card-templates";
+import { shareProviderCard, isExportAvailable } from "@/lib/card-export";
 import VisitingCard from "@/components/VisitingCard";
 import QRSticker from "@/components/QRSticker";
 import type { RootStackScreenProps } from "@/navigation/types";
@@ -106,11 +106,7 @@ export default function GrowthKitScreen({
     if (!provider) return;
     const url = getPublicProviderUrl(provider.slug);
     try {
-      await Share.share({
-        title: `${provider.business_name} on Seivio`,
-        message: `Connect with ${provider.business_name} on Seivio: ${url}`,
-        url,
-      });
+      await shareProviderCard(provider.business_name, url);
     } catch (err) {
       console.error("Share error:", err);
     }
@@ -362,6 +358,19 @@ export default function GrowthKitScreen({
             </Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.secondaryAction}
+            onPress={() => {
+              Alert.alert(
+                "Export Limitation",
+                "PNG and PDF export require a React Native 0.76 compatible view capture library, which is currently not available due to dependency conflicts. Please use Share or Copy Link instead."
+              );
+            }}
+          >
+            <Ionicons name="download-outline" size={18} color={designTokens.primaryBlue} />
+            <Text style={styles.secondaryActionText}>Download</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.secondaryAction} onPress={handlePrintInfo}>
             <Ionicons name="print-outline" size={18} color={designTokens.primaryBlue} />
             <Text style={styles.secondaryActionText}>Print Guide</Text>
@@ -534,11 +543,13 @@ const styles = StyleSheet.create({
   },
   actionGrid: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     marginBottom: 16,
   },
   primaryAction: {
-    flex: 1.2,
+    flex: 1,
+    minWidth: "45%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -555,6 +566,7 @@ const styles = StyleSheet.create({
   },
   secondaryAction: {
     flex: 1,
+    minWidth: "45%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

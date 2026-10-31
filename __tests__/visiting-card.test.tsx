@@ -10,7 +10,19 @@ import {
   STICKER_TEMPLATES,
   StickerTemplateId,
 } from "@/lib/card-templates";
+import {
+  shareProviderCard,
+  exportCardAsPNG,
+  exportCardAsPDF,
+  isExportAvailable,
+  getAvailableMethods,
+} from "@/lib/card-export";
 import type { ProviderDetail } from "@/lib/providers";
+
+// Mock Share module at the top level
+jest.mock("react-native/Libraries/Share/Share", () => ({
+  share: jest.fn().mockResolvedValue({ action: "sharedAction" }),
+}));
 
 const mockProvider: ProviderDetail = {
   id: "provider-101",
@@ -142,6 +154,31 @@ describe("Provider Digital Visiting Card System", () => {
         expect(getByText(STICKER_TEMPLATES[stickerId].callToAction)).toBeTruthy();
         expect(getByText("SEIVIO")).toBeTruthy();
       });
+    });
+  });
+
+  describe("Card Export Functionality", () => {
+    it("reports PNG export as unavailable due to dependency conflicts", () => {
+      expect(isExportAvailable()).toBe(false);
+    });
+
+    it("throws informative error when attempting PNG export", async () => {
+      await expect(exportCardAsPNG()).rejects.toThrow(
+        "PNG export requires React Native 0.76 compatible view capture library"
+      );
+    });
+
+    it("throws informative error when attempting PDF export", async () => {
+      await expect(exportCardAsPDF()).rejects.toThrow(
+        "PDF export requires React Native 0.76 compatible PDF library"
+      );
+    });
+
+    it("reports only share and copy-link as available methods", () => {
+      const methods = getAvailableMethods();
+      expect(methods).toEqual(["share", "copy-link"]);
+      expect(methods).not.toContain("png");
+      expect(methods).not.toContain("pdf");
     });
   });
 });

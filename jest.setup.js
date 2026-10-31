@@ -8,6 +8,13 @@ jest.mock("@react-native-async-storage/async-storage", () =>
   require("@react-native-async-storage/async-storage/jest/async-storage-mock")
 );
 
+// Mock Share module
+jest.mock("react-native/Libraries/Share/Share", () => ({
+  share: jest.fn().mockResolvedValue({ action: "sharedAction" }),
+  dismiss: jest.fn().mockResolvedValue(undefined),
+  sharedAction: jest.fn().mockResolvedValue({ action: "sharedAction" }),
+}));
+
 // @expo/vector-icons relies on the native font loader, which is unavailable in
 // Jest (it throws "loadedNativeFonts.forEach is not a function"). Render the
 // icons as plain, inert Text elements instead — tests assert on text and
