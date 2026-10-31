@@ -3,8 +3,11 @@ import {
   moderateImage,
   normalizeText,
   createAppealPayload,
+  submitModerationAppeal,
+  uploadAndModerateProfileImage,
   MAX_IMAGE_SIZE_BYTES,
 } from "@/lib/moderation";
+import { supabase } from "@/integrations/supabase/client";
 
 describe("Trust & Safety — Text Moderation", () => {
   describe("Normalization & Bypass Detection", () => {
@@ -181,5 +184,115 @@ describe("Trust & Safety — Appeals Workflow", () => {
     expect(() =>
       createAppealPayload("txt-1", "text", "reason", "ok")
     ).toThrow(/at least 5 characters/i);
+  });
+
+  it("submits appeal to Supabase moderation_appeals table", async () => {
+    const mockInsert = jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        maybeSingle: jest.fn().mockResolvedValue({
+          data: {
+            id: "appeal-99",
+            user_id: "user-1",
+            content_id: "img-123",
+            content_type: "image",
+            flagged_reason: "nsfw",
+            user_explanation: "This is a cartoon electrician mascot.",
+            status: "pending",
+            created_at: new Date().toISOString(),
+          },
+          error: null,
+        }),
+      }),
+    });
+
+    jest.spyOn(supabase, "from").mockImplementation((table: string): any => {
+      if (table === "moderation_appeals") {
+        return { insert: mockInsert };
+      }
+      return {};
+    });
+
+    const appeal = await submitModerationAppeal(
+      "user-1",
+      "img-123",
+      "image",
+      "nsfw",
+      "This is a cartoon electrician mascot."
+    );
+
+    expect(appeal.id).toBe("appeal-99");
+    expect(appeal.status).toBe("pending");
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content_id: "img-123",
+        user_id: "user-1",
+      })
+    );
+  });
+});
+
+describe("Trust & Safety — Fail-Closed Image Upload Workflow", () => {
+  it("rejects overt explicit images immediately without uploading", async () => {
+    const res = await uploadAndModerateProfileImage({
+      userId: "u-123",
+      uri: "file:///photos/nsfw_nude_photo.jpg",
+      mimeType: "image/jpeg",
+      fileSizeBytes: 1024,
+    });
+
+    expect(res.isApproved).toBe(false);
+    expect(res.status).toBe("rejected");
+    expect(res.category).toBe("explicit_nudity");
+  });
+
+  it("fails closed to manual_review if Edge Function returns an error or is unreachable", async () => {
+    (supabase as any).storage = {
+      from: jest.fn().mockReturnValue({
+        upload: jest.fn().mockResolvedValue({ error: null }),
+      }),
+    };
+    (supabase as any).functions = {
+      invoke: jest.fn().mockResolvedValue({ data: null, error: new Error("Service Timeout") }),
+    };
+
+    const res = await uploadAndModerateProfileImage({
+      userId: "u-123",
+      uri: "file:///photos/clean_profile.jpg",
+      mimeType: "image/jpeg",
+      fileSizeBytes: 2048,
+    });
+
+    expect(res.isApproved).toBe(false);
+    expect(res.status).toBe("manual_review");
+    expect(res.appealsAllowed).toBe(true);
+  });
+
+  it("approves and returns publicUrl when Edge Function passes inspection", async () => {
+    (supabase as any).storage = {
+      from: jest.fn().mockReturnValue({
+        upload: jest.fn().mockResolvedValue({ error: null }),
+      }),
+    };
+    (supabase as any).functions = {
+      invoke: jest.fn().mockResolvedValue({
+        data: {
+          status: "approved",
+          isApproved: true,
+          publicUrl: "https://seivio.supabase.co/storage/v1/object/public/profile_images/safe.jpg",
+        },
+        error: null,
+      }),
+    };
+
+    const res = await uploadAndModerateProfileImage({
+      userId: "u-123",
+      uri: "file:///photos/clean_profile.jpg",
+      mimeType: "image/jpeg",
+      fileSizeBytes: 2048,
+    });
+
+    expect(res.isApproved).toBe(true);
+    expect(res.status).toBe("approved");
+    expect(res.publicUrl).toContain("profile_images/safe.jpg");
   });
 });

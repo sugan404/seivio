@@ -110,6 +110,19 @@ export default function AccountScreen() {
         <Ionicons name="chevron-forward" size={18} color={designTokens.secondaryText} />
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.row}
+        onPress={() => (navigation as any).navigate("AdminVerificationReview")}
+        testID="account-admin-review"
+      >
+        <Ionicons name="shield-half-outline" size={20} color="#7C3AED" />
+        <View style={styles.rowCol}>
+          <Text style={styles.rowText}>Admin Verification Center</Text>
+          <Text style={styles.rowSubtext}>Inspect and approve pending provider documents</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={designTokens.secondaryText} />
+      </TouchableOpacity>
+
       {user ? (
         <TouchableOpacity
           style={[styles.signOut, signingOut && styles.signOutDisabled]}
