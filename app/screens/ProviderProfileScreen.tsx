@@ -30,6 +30,7 @@ import {
   fetchUserReviewForProvider,
   submitReview,
 } from "@/lib/reviews";
+import { isProviderVerified } from "@/lib/verification";
 import type { Review } from "@/types";
 import type { RootStackScreenProps } from "@/navigation/types";
 import StarRating from "@/components/StarRating";
@@ -278,7 +279,15 @@ export default function ProviderProfileScreen({
           )}
 
           <View style={styles.headerInfo}>
-            <Text style={styles.businessName}>{provider.business_name}</Text>
+            <View style={styles.nameRow}>
+              <Text style={styles.businessName}>{provider.business_name}</Text>
+              {isProviderVerified(provider) ? (
+                <View style={styles.verifiedBadge}>
+                  <Ionicons name="checkmark-circle" size={15} color={designTokens.primaryBlue} />
+                  <Text style={styles.verifiedText}>Verified</Text>
+                </View>
+              ) : null}
+            </View>
             {ratingCount > 0 ? (
               <View style={styles.ratingRow}>
                 <StarRating value={Math.round(ratingValue)} size={15} />
@@ -347,6 +356,16 @@ export default function ProviderProfileScreen({
             <Text style={[styles.actionText, styles.actionTextActive]}>
               {myReview ? "Reviewed" : "Write a Review"}
             </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.actionButton, styles.cardAction]}
+            onPress={() => navigation.navigate("GrowthKit", { providerSlug: provider.slug })}
+            testID="visiting-card-button"
+            accessibilityLabel="View Visiting Card and QR code"
+          >
+            <Ionicons name="card-outline" size={18} color={designTokens.primaryBlue} />
+            <Text style={styles.actionText}>Card & QR</Text>
           </TouchableOpacity>
         </View>
 
@@ -519,7 +538,23 @@ const styles = StyleSheet.create({
   },
   initials: { color: designTokens.primaryBlue, fontWeight: "800", fontSize: 24 },
   headerInfo: { flex: 1 },
+  nameRow: { flexDirection: "row", alignItems: "center", flexWrap: "wrap" },
   businessName: { fontSize: designTokens.titleMedium, fontWeight: "800", color: designTokens.mainText },
+  verifiedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: designTokens.lightBlueSurface,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginLeft: 6,
+  },
+  verifiedText: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: designTokens.primaryBlue,
+    marginLeft: 3,
+  },
   ratingRow: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   ratingText: { marginLeft: 6, fontSize: 13, color: designTokens.mainText, fontWeight: "600" },
   row: { flexDirection: "row", alignItems: "center", marginTop: 4 },
@@ -535,11 +570,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: designTokens.primaryBlue,
     backgroundColor: designTokens.whiteSurface,
-    marginRight: 10,
+    marginRight: 8,
   },
   reviewAction: {
     backgroundColor: designTokens.primaryBlue,
     borderColor: designTokens.primaryBlue,
+  },
+  cardAction: {
+    backgroundColor: designTokens.paleBlueBackground,
+    borderColor: designTokens.border,
     marginRight: 0,
   },
   actionButtonActive: { backgroundColor: designTokens.primaryBlue, borderColor: designTokens.primaryBlue },

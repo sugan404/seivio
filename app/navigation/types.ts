@@ -7,6 +7,9 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   ProviderProfile: { slug: string };
+  GrowthKit: { providerSlug?: string } | undefined;
+  Verification: { providerId?: string } | undefined;
+  ProviderOnboarding: undefined;
 };
 
 /** Routes available on the bottom tab navigator (the "Main" experience). */

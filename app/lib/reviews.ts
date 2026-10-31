@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Review } from "@/types";
 import { REVIEW_MAX_LENGTH, REVIEW_MIN_LENGTH } from "@/types";
+import { moderateText } from "@/lib/moderation";
 
 const REVIEW_COLUMNS =
   "id, provider_id, user_id, rating, review_text, created_at, updated_at";
@@ -58,6 +59,11 @@ export async function submitReview({
   }
   if (trimmed.length > REVIEW_MAX_LENGTH) {
     throw new Error(`Your review must be ${REVIEW_MAX_LENGTH} characters or fewer.`);
+  }
+
+  const moderation = moderateText(trimmed, "review");
+  if (moderation.status === "rejected") {
+    throw new Error(moderation.reason || "Review content violates community standards.");
   }
 
   const { data, error } = await supabase

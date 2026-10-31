@@ -15,6 +15,7 @@ import {
 import { designTokens } from "@/constants/designTokens";
 import { REVIEW_MAX_LENGTH, REVIEW_MIN_LENGTH } from "@/types";
 import StarRating from "@/components/StarRating";
+import { moderateText } from "@/lib/moderation";
 
 type Props = {
   visible: boolean;
@@ -55,6 +56,11 @@ export default function ReviewModal({
     }
     if (trimmedLength < REVIEW_MIN_LENGTH) {
       setLocalError(`Your review must be at least ${REVIEW_MIN_LENGTH} characters.`);
+      return;
+    }
+    const mod = moderateText(text.trim(), "review");
+    if (mod.status === "rejected") {
+      setLocalError(mod.reason || "Review violates community guidelines.");
       return;
     }
     setLocalError(null);

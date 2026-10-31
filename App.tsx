@@ -17,6 +17,9 @@ import FavoritesScreen from "@/screens/FavoritesScreen";
 import AccountScreen from "@/screens/AccountScreen";
 import AuthScreen from "@/screens/AuthScreen";
 import ProviderProfileScreen from "@/screens/ProviderProfileScreen";
+import GrowthKitScreen from "@/screens/GrowthKitScreen";
+import VerificationScreen from "@/screens/VerificationScreen";
+import ProviderOnboardingScreen from "@/screens/ProviderOnboardingScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -44,14 +47,12 @@ function RootNavigator() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {user ? (
-        <>
-          <Stack.Screen name="Main" component={MainTabs} />
-          <Stack.Screen name="ProviderProfile" component={ProviderProfileScreen} />
-        </>
-      ) : (
-        <Stack.Screen name="Auth" component={AuthScreen} />
-      )}
+      <Stack.Screen name="Main" component={MainTabs} />
+      <Stack.Screen name="ProviderProfile" component={ProviderProfileScreen} />
+      <Stack.Screen name="GrowthKit" component={GrowthKitScreen} />
+      <Stack.Screen name="Verification" component={VerificationScreen} />
+      <Stack.Screen name="ProviderOnboarding" component={ProviderOnboardingScreen} />
+      <Stack.Screen name="Auth" component={AuthScreen} />
     </Stack.Navigator>
   );
 }

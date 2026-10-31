@@ -70,21 +70,72 @@ export default function AccountScreen() {
         <Ionicons name="chevron-forward" size={18} color={designTokens.secondaryText} />
       </TouchableOpacity>
 
+      {/* Provider Growth & Trust Tools */}
       <TouchableOpacity
-        style={[styles.signOut, signingOut && styles.signOutDisabled]}
-        onPress={handleSignOut}
-        disabled={signingOut}
-        testID="sign-out"
+        style={styles.rowHighlight}
+        onPress={() => (navigation as any).navigate("GrowthKit")}
+        testID="account-growth-kit"
       >
-        {signingOut ? (
-          <ActivityIndicator color={designTokens.errorRed} />
-        ) : (
-          <>
-            <Ionicons name="log-out-outline" size={20} color={designTokens.errorRed} />
-            <Text style={styles.signOutText}>Sign out</Text>
-          </>
-        )}
+        <Ionicons name="card" size={20} color={designTokens.primaryBlue} />
+        <View style={styles.rowCol}>
+          <Text style={styles.rowTextBold}>Grow Your Business</Text>
+          <Text style={styles.rowSubtext}>Digital visiting card & printable QR stickers</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={designTokens.secondaryText} />
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.row}
+        onPress={() => (navigation as any).navigate("Verification")}
+        testID="account-verification"
+      >
+        <Ionicons name="shield-checkmark-outline" size={20} color="#059669" />
+        <View style={styles.rowCol}>
+          <Text style={styles.rowText}>Get Verified</Text>
+          <Text style={styles.rowSubtext}>Apply for the official Seivio trust badge</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={designTokens.secondaryText} />
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.row}
+        onPress={() => (navigation as any).navigate("ProviderOnboarding")}
+        testID="account-onboarding"
+      >
+        <Ionicons name="briefcase-outline" size={20} color={designTokens.primaryBlue} />
+        <View style={styles.rowCol}>
+          <Text style={styles.rowText}>List Your Business</Text>
+          <Text style={styles.rowSubtext}>Register or update your professional service listing</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={designTokens.secondaryText} />
+      </TouchableOpacity>
+
+      {user ? (
+        <TouchableOpacity
+          style={[styles.signOut, signingOut && styles.signOutDisabled]}
+          onPress={handleSignOut}
+          disabled={signingOut}
+          testID="sign-out"
+        >
+          {signingOut ? (
+            <ActivityIndicator color={designTokens.errorRed} />
+          ) : (
+            <>
+              <Ionicons name="log-out-outline" size={20} color={designTokens.errorRed} />
+              <Text style={styles.signOutText}>Sign out</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={styles.signInBtn}
+          onPress={() => (navigation as any).navigate("Auth")}
+          testID="sign-in-btn"
+        >
+          <Ionicons name="log-in-outline" size={20} color={designTokens.whiteSurface} />
+          <Text style={styles.signInBtnText}>Sign In / Create Account</Text>
+        </TouchableOpacity>
+      )}
 
       <Text style={styles.footer}>Seivio · Find. Connect. Get It Done.</Text>
     </View>
@@ -127,12 +178,42 @@ const styles = StyleSheet.create({
     backgroundColor: designTokens.whiteSurface,
     borderRadius: designTokens.inputRadius,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderWidth: 1,
     borderColor: designTokens.border,
-    marginBottom: 12,
+    marginBottom: 10,
   },
-  rowText: { flex: 1, marginLeft: 12, fontSize: designTokens.bodyLarge, color: designTokens.mainText, fontWeight: "600" },
+  rowHighlight: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: designTokens.lightBlueSurface,
+    borderRadius: designTokens.inputRadius,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1.5,
+    borderColor: designTokens.primaryBlue,
+    marginBottom: 10,
+  },
+  rowCol: { flex: 1, marginLeft: 12 },
+  rowText: { fontSize: designTokens.bodyLarge, color: designTokens.mainText, fontWeight: "600" },
+  rowTextBold: { fontSize: designTokens.bodyLarge, color: designTokens.primaryBlue, fontWeight: "800" },
+  rowSubtext: { fontSize: 11, color: designTokens.secondaryText, marginTop: 2 },
+  signInBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: designTokens.primaryBlue,
+    borderRadius: designTokens.inputRadius,
+    paddingVertical: 14,
+    marginTop: 8,
+    minHeight: 48,
+  },
+  signInBtnText: {
+    color: designTokens.whiteSurface,
+    fontWeight: "700",
+    marginLeft: 8,
+    fontSize: designTokens.bodyLarge,
+  },
   signOut: {
     flexDirection: "row",
     alignItems: "center",
